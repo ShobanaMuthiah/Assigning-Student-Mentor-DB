@@ -16,8 +16,8 @@ router.get('/previousmentor/:id',FindPreviousMentor)
 router.put('/assignstudents/:id',AssignStudentOfMentor)
 router.put('/assignmentor/:id',AssignMentor)
 
-router.delete('/mentordel',delMentor);
-router.delete('/studentdel',delStudent)
+router.delete('/mentordel/:id',delMentor);
+router.delete('/studentdel/:id',delStudent)
 
 
 export default router;
