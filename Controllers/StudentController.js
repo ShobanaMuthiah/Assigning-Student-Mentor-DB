@@ -11,6 +11,22 @@ export const CreateStudent=async (req, res) => {
     }
   }
 
+  export const delStudent=async(req,res)=>{
+    try {
+      const studId=req.params.id;
+      const stud=await Mentor.deleteOne({_id:studId});
+      if(stud.matchedCount===0){
+          res.status(404).json({message:"not found"})
+      }
+  res.status(200).json({message:"data deleted",data:stud})
+  
+      
+    } catch (error) {
+      res.status(500).json({error:error})
+      
+    }
+  }
+
   //get student details
   export const getStudent=async (req,res)=>{
     const studDetails=await Student.find();

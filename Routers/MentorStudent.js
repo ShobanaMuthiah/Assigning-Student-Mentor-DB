@@ -1,6 +1,6 @@
 import express from 'express';
-import { AssignMentor, AssignStudentOfMentor, CreateMentor, getMentor } from '../Controllers/MentorController.js';
-import { CreateStudent, FindPreviousMentor, WithoutMentor, getStudent } from '../Controllers/StudentController.js';
+import { AssignMentor, AssignStudentOfMentor, CreateMentor, delMentor, getMentor } from '../Controllers/MentorController.js';
+import { CreateStudent, FindPreviousMentor, WithoutMentor, delStudent, getStudent } from '../Controllers/StudentController.js';
 
 const router=express.Router();
 
@@ -15,6 +15,9 @@ router.get('/previousmentor/:id',FindPreviousMentor)
 
 router.put('/assignstudents/:id',AssignStudentOfMentor)
 router.put('/assignmentor/:id',AssignMentor)
+
+router.delete('/mentordel',delMentor);
+router.delete('/studentdel',delStudent)
 
 
 export default router;
