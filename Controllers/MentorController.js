@@ -24,11 +24,11 @@ export const getMentor=async (req,res)=>{
 export const delMentor=async(req,res)=>{
   try {
     const menId=req.params.id;
-    const mentor=await Mentor.deleteOne({_id:menId});
-    if(mentor.matchedCount===0){
+    const ment=await Mentor.deleteOne({_id:menId});
+    if(ment.matchedCount===0){
         res.status(404).json({message:"not found"})
     }
-res.status(200).json({message:"data deleted",data:mentor})
+res.status(200).json({message:"data deleted",data:ment})
 
     
   } catch (error) {
