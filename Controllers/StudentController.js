@@ -30,7 +30,7 @@ export const CreateStudent=async (req, res) => {
     try {
       const studId=req.params.id;
       const stud=await Student.deleteOne({_id:studId});
-      if(stud.deleteCount===0){
+      if(stud.deletedCount=== 0){
           res.status(404).json({message:"not found"})
       }
   res.status(200).json({message:"data deleted",data:stud})
@@ -47,7 +47,7 @@ export const CreateStudent=async (req, res) => {
     const studDetails=await Student.find();
     console.log(studDetails)
     if(studDetails.length===0){
-      res.status(200).json({message:"There is no more data inserted yet"})
+      res.status(404).json({message:"There is no more data inserted yet"})
     }
     res.status(200).json({message:"data fetched sucessfully",data:studDetails})
 }
@@ -73,7 +73,7 @@ export const FindPreviousMentor=async (req,res)=>{
               return res.status(404).json({ message: "Student not found" });
           }
   if(!student.PrevMentor){
-    res.status(200).json({message:"No more Previous Mentor for this student"})
+    res.status(404).json({message:"No more Previous Mentor for this student"})
   }          // Return the student details along with the populated mentor details
           res.status(200).json({
               message: "Previous mentor of the student fetched successfully",
