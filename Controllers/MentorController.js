@@ -59,7 +59,7 @@ export const AssignMentor=async (req,res)=>{
     const {mentor}=req.body;
 const current=await Student.findOne({_id:studId})
         const mentors=await Mentor.findOne({name:mentor})
-        if(mentors.matchedCount===0){
+        if(!mentors){
           res.status(404).json({message:"mentor not found"})
         }
 
@@ -70,19 +70,18 @@ const current=await Student.findOne({_id:studId})
 res.status(200).json({message:"mentor assigned",data:update})
         }
         const stud=await Student.findOne({mentor:{$exists:true}})
-       if(stud){
+    
         if(stud.PrevMentor){
         await Student.updateOne({_id:studId},{$addToSet:{PrevMentor:stud.mentor}})
         }
 
-        else{
 
           await Student.updateOne({_id:studId},{$set:{PrevMentor:current.mentor}})
-        }
+        
         await Student.updateOne({_id:studId},{$addToSet:{ mentor:mentors.name}})
             const updates=await Student.findById({_id:studId})
 res.status(200).json({message:"mentor assigned",data:updates})
-       }
+    
     }
     catch(error){
         res.status(500).json({message:"internal server error"})
