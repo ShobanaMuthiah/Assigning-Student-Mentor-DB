@@ -16,7 +16,7 @@ export const getAMentor=async (req,res)=>{
     const ID=req.params.id;
     const mentor=await Mentor.findById({_id:ID});
     if(mentor.length===0){
-      res.status(200).json({message:"mentor not found"})
+      res.status(404).json({message:"mentor not found"})
     }
     res.status(200).json({message:"successfully fetch data",data:mentor})
 
