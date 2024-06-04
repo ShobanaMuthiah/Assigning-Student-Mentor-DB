@@ -95,35 +95,36 @@ export const AssignMentor = async (req, res) => {
 
 export const AssignStudentOfMentor = async (req, res) => {
     // Extract mentor ID from URL parameters
-  try {
-    const mentorId = req.params.id;
-    const { students } = req.body;
+    try {
+      const mentorId = req.params.id;
+      const { students } = req.body;
 
-    const mentor = await Mentor.findById(mentorId);
-    if (!mentor) {
-        return res.status(404).json({ message: "Mentor not found" });
-    }
-const prev=await Student.findById({_id:students})
-    // Update PrevMentor field for students who already have a mentor
-    await Student.updateMany(
-        { _id:students}, {PrevMentor:prev.mentor }
-    );
+      const mentor = await Mentor.findById(mentorId);
+      if (!mentor) {
+          return res.status(404).json({ message: "Mentor not found" });
+      }
 
+      const studentsToUpdate = await Student.find({ _id: { $in: students } });
 
-    // Update mentor field for students
-    await Student.updateMany(
-        { _id:students},
-        { mentor: mentor.name }
-    );
+      for (let student of studentsToUpdate) {
+          if (student.mentor) {
+              const previousMentor = await Mentor.findOne({ name: student.mentor });
+              if (previousMentor) {
+                  previousMentor.students = previousMentor.students.filter(sId => sId.toString() !== student._id.toString());
+                  await previousMentor.save();
+              }
+          }
 
-    await Mentor.updateMany(
-      { _id:mentorId},
-      { students:students }
-  );
+          student.PrevMentor = student.mentor;
+          student.mentor = mentor.name;
+          await student.save();
+      }
 
-    res.status(200).json({ message: "Students assigned to mentor" });
-} catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Internal server error" });
-}
-}
+      mentor.students = mentor.students.concat(students.filter(sId => !mentor.students.includes(sId)));
+      await mentor.save();
+
+      res.status(200).json({ message: "Students assigned to mentor", data: mentor });
+  } catch (error) {
+      console.error('Error assigning students:', error);
+      res.status(500).json({ message: "Internal server error" });
+  }}
