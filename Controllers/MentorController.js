@@ -10,6 +10,22 @@ export const CreateMentor=async (req, res) => {
     res.status(500).send(err);
   }
 };
+export const getAMentor=async (req,res)=>{
+  try {
+    
+    const ID=req.params.id;
+    const mentor=await Mentor.findById({_id:ID});
+    if(mentor.length===0){
+      res.status(200).json({message:"mentor not found"})
+    }
+    res.status(200).json({message:"successfully fetch data",data:mentor})
+
+  } catch (error) {
+    res.status(500).json({message:"Internal server Error"})
+    
+  }
+
+}
 
 export const getMentor=async (req,res)=>{
     const mentorDetails=await Mentor.find();

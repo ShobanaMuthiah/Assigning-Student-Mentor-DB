@@ -10,7 +10,22 @@ export const CreateStudent=async (req, res) => {
       res.status(500).send(err);
     }
   }
-
+  export const getAStudent=async (req,res)=>{
+    try {
+      
+      const ID=req.params.id;
+      const stud=await Student.findById({_id:ID});
+      if(stud.length===0){
+        res.status(200).json({message:"mentor not found"})
+      }
+      res.status(200).json({message:"successfully fetch data",data:stud})
+  
+    } catch (error) {
+      res.status(500).json({message:"Internal server Error"})
+      
+    }
+  
+  }
   export const delStudent=async(req,res)=>{
     try {
       const studId=req.params.id;
