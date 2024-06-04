@@ -90,39 +90,42 @@ export const AssignMentor = async (req, res) => {
   }
 };
 
-    
+
 export const AssignStudentOfMentor = async (req, res) => {
-  // Extract mentor ID from URL parameters
-try {
-  const mentorId = req.params.id;
-  const { students } = req.body;
+  try {
+    const mentorId = req.params.id;
+    const { students } = req.body;
 
-  const mentor = await Mentor.findById(mentorId);
-  if (!mentor) {
+    const mentor = await Mentor.findById(mentorId);
+    if (!mentor) {
       return res.status(404).json({ message: "Mentor not found" });
+    }
+
+    // Find students who are being reassigned
+    const studentsToReassign = await Student.find({ _id: { $in: students } });
+
+    // Update PrevMentor field for students who already have a mentor
+    const studentsWithPrevMentor = studentsToReassign.filter(student => student.mentor);
+    await Student.updateMany(
+      { _id: { $in: studentsWithPrevMentor.map(student => student._id) } },
+      { $set: { PrevMentor: mentor.name } }
+    );
+
+    // Update mentor field for students
+    await Student.updateMany(
+      { _id: { $in: students } },
+      { $set: { mentor: mentor.name } }
+    );
+
+    // Add students to the mentor's students list
+    mentor.students = [...new Set([...mentor.students, ...students])];
+    await mentor.save();
+
+    const updatedMentor = await Mentor.findById(mentorId).populate('students');
+
+    res.status(200).json({ message: "Students assigned to mentor", data: updatedMentor });
+  } catch (error) {
+    console.error('Error assigning students:', error);
+    res.status(500).json({ message: "Internal server error" });
   }
-const prev=await Student.findById({_id:students})
-  // Update PrevMentor field for students who already have a mentor
-  await Student.updateMany(
-      { _id:students}, {PrevMentor:prev.mentor }
-  );
-
-
-  // Update mentor field for students
-  await Student.updateMany(
-      { _id:students},
-      { mentor: mentor.name }
-  );
-
-  await Mentor.updateMany(
-    { _id:mentorId},
-    { students:students }
-);
-const updated=await Mentor.findById({_id:mentorId})
-
-  res.status(200).json({ message: "Students assigned to mentor",data:updated});
-} catch (error) {
-  console.error(error);
-  res.status(500).json({ message: "Internal server error" });
-}
-}
+};
