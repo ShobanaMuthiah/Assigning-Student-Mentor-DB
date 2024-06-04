@@ -57,7 +57,7 @@ export const AssignMentor=async (req,res)=>{
         
     const studId=req.params.id;
     const {mentor}=req.body;
-const current=await Student.findOne({_id:studId})
+const current=await Student.findById({_id:studId})
         const mentors=await Mentor.findOne({name:mentor})
         if(!mentors){
           res.status(404).json({message:"mentor not found"})
