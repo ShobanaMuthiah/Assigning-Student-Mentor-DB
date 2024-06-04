@@ -15,7 +15,7 @@ export const CreateStudent=async (req, res) => {
     try {
       const studId=req.params.id;
       const stud=await Mentor.deleteOne({_id:studId});
-      if(stud.matchedCount===0){
+      if(stud.deleteCount===0){
           res.status(404).json({message:"not found"})
       }
   res.status(200).json({message:"data deleted",data:stud})
