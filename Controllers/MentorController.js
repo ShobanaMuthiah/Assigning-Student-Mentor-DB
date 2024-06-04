@@ -120,8 +120,9 @@ const prev=await Student.findById({_id:students})
       { _id:mentorId},
       { students:students }
   );
+  const updated=await Mentor.findById({_id:mentorId})
 
-    res.status(200).json({ message: "Students assigned to mentor" });
+    res.status(200).json({ message: "Students assigned to mentor",data:updated});
 } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal server error" });
