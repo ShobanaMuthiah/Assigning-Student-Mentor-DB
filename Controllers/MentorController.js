@@ -78,7 +78,7 @@ res.status(200).json({message:"mentor assigned",data:update})
 
           await Student.updateOne({_id:studId},{$set:{PrevMentor:current.mentor}})
         
-        await Student.updateOne({_id:studId},{$addToSet:{ mentor:mentors.name}})
+        await Student.updateOne({_id:studId},{mentor:mentors.name})
             const updates=await Student.findById({_id:studId})
 res.status(200).json({message:"mentor assigned",data:updates})
     
