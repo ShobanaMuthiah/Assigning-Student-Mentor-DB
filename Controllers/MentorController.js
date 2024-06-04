@@ -15,7 +15,7 @@ export const getAMentor=async (req,res)=>{
     
     const ID=req.params.id;
     const mentor=await Mentor.findById({_id:ID});
-    if(mentor.length===0){
+    if(mentor.matchedCount===0){
       res.status(404).json({message:"mentor not found"})
     }
     res.status(200).json({message:"successfully fetch data",data:mentor})
@@ -30,7 +30,7 @@ export const getAMentor=async (req,res)=>{
 export const getMentor=async (req,res)=>{
     const mentorDetails=await Mentor.find();
     console.log(mentorDetails)
-    if(mentorDetails.length===0){
+    if(mentorDetails.matchedCount===0){
       res.status(404).json({message:"There is no more data inserted yet"})
     }
 
