@@ -51,43 +51,43 @@ res.status(200).json({message:"data deleted",data:ment})
     
   }
 }
-export const AssignMentor=async (req,res)=>{
+export const AssignMentor = async (req, res) => {
+  try {
+      const studId = req.params.id;
+      const { mentor } = req.body;
 
-    try{
-        
-    const studId=req.params.id;
-    const {mentor}=req.body;
-const current=await Student.findById({_id:studId})
-        const mentors=await Mentor.findOne({name:mentor})
-        if(!mentors){
-          res.status(404).json({message:"mentor not found"})
-        }
+      // Find the student by ID
+      const student = await Student.findById(studId);
+      if (!student) {
+          return res.status(404).json({ message: "Student not found" });
+      }
 
-        const students=await Student.findOne({mentor:{$exists:false}})
-        if(students){
-            await Student.updateOne({_id:studId},{$set:{ mentor:mentors.name}})
-            const update=await Student.findById({_id:studId})
-res.status(200).json({message:"mentor assigned",data:update})
-        }
-        const stud=await Student.findOne({mentor:{$exists:true}})
-    
-        if(stud.PrevMentor){
-        await Student.updateOne({_id:studId},{$addToSet:{PrevMentor:stud.mentor}})
-        }
+      // Find the mentor by name
+      const mentorDoc = await Mentor.findOne({ name: mentor });
+      if (!mentorDoc) {
+          return res.status(404).json({ message: "Mentor not found" });
+      }
 
+      // Check if the student has a current mentor
+      if (student.mentor) {
+          // Add the current mentor to the PreviousMentor array if it exists
+          await Student.updateOne(
+              { _id: studId },
+              {  PrevMentor: student.mentor  }
+          );
+      }
 
-          await Student.updateOne({_id:studId},{$set:{PrevMentor:current.mentor}})
-        
-        await Student.updateOne({_id:studId},{mentor:mentors.name})
-            const updates=await Student.findById({_id:studId})
-res.status(200).json({message:"mentor assigned",data:updates})
-    
-    }
-    catch(error){
-        res.status(500).json({message:"internal server error"})
+      // Assign the new mentor
+      student.mentor = mentorDoc.name;
+      await student.save();
 
-    }
-}
+      // Return the updated student data
+      return res.status(200).json({ message: "Mentor assigned", data: student });
+  } catch (error) {
+      console.error(error);
+      return res.status(500).json({ message: "Internal server error" });
+  }
+};
 
     
 
