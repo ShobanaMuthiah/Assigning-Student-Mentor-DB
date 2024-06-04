@@ -31,7 +31,7 @@ export const getMentor=async (req,res)=>{
     const mentorDetails=await Mentor.find();
     console.log(mentorDetails)
     if(mentorDetails.length===0){
-      res.status(200).json({message:"There is no more data inserted yet"})
+      res.status(404).json({message:"There is no more data inserted yet"})
     }
 
     res.status(200).json({message:"successfully fetch data",data:mentorDetails})
@@ -45,7 +45,6 @@ export const delMentor=async(req,res)=>{
         res.status(404).json({message:"not found"})
     }
 res.status(200).json({message:"data deleted",data:ment})
-
     
   } catch (error) {
     res.status(500).json({error:error})
@@ -60,6 +59,9 @@ export const AssignMentor=async (req,res)=>{
     const {mentor}=req.body;
 const current=await Student.findOne({_id:studId})
         const mentors=await Mentor.findOne({name:mentor})
+        if(mentors.matchedCount===0){
+          res.status(404).json({message:"mentor not found"})
+        }
 
         const students=await Student.findOne({mentor:{$exists:false}})
         if(students){

@@ -1,5 +1,4 @@
 import express from 'express';
-import cors from 'cors';
 import dotenv from 'dotenv';
 import connectDB  from './Databases/Config.js';
 import MentorStudent from './Routers/MentorStudent.js'
@@ -9,9 +8,7 @@ dotenv.config()
 const app=express()
 
 app.use(express.json())
-app.use(cors({
 
-}))
 
 connectDB()
 app.use(express.json());
