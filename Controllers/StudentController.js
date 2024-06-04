@@ -14,7 +14,7 @@ export const CreateStudent=async (req, res) => {
   export const delStudent=async(req,res)=>{
     try {
       const studId=req.params.id;
-      const stud=await Mentor.deleteOne({_id:studId});
+      const stud=await Student.deleteOne({_id:studId});
       if(stud.deleteCount===0){
           res.status(404).json({message:"not found"})
       }
