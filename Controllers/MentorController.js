@@ -116,6 +116,11 @@ const prev=await Student.findById({_id:students})
         { mentor: mentor.name }
     );
 
+    await Mentor.updateMany(
+      { _id:mentorId},
+      { students:students }
+  );
+
     res.status(200).json({ message: "Students assigned to mentor" });
 } catch (error) {
     console.error(error);
